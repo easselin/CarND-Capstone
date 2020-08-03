@@ -15,8 +15,11 @@ Please use **one** of the two installation options, either native **or** docker 
 * Follow these instructions to install ROS
   * [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu) if you have Ubuntu 16.04.
   * [ROS Indigo](http://wiki.ros.org/indigo/Installation/Ubuntu) if you have Ubuntu 14.04.
+<<<<<<< HEAD
 * [Dataspeed DBW](https://bitbucket.org/DataspeedInc/dbw_mkz_ros)
   * Use this option to install the SDK on a workstation that already has ROS installed: [One Line SDK Install (binary)](https://bitbucket.org/DataspeedInc/dbw_mkz_ros/src/81e63fcc335d7b64139d7482017d6a97b405e250/ROS_SETUP.md?fileviewer=file-view-default)
+=======
+>>>>>>> 714e04c05a5f7524c42cfff5aba6f462e51874d3
 * Download the [Udacity Simulator](https://github.com/udacity/CarND-Capstone/releases).
 
 ### Docker Installation
@@ -33,7 +36,11 @@ docker run -p 4567:4567 -v $PWD:/capstone -v /tmp/log:/root/.ros/ --rm -it capst
 ```
 
 ### Port Forwarding
+<<<<<<< HEAD
 To set up port forwarding, please refer to the [instructions from term 2](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/f758c44c-5e40-4e01-93b5-1a82aa4e044f/concepts/16cf4a78-4fc7-49e1-8621-3450ca938b77)
+=======
+To set up port forwarding, please refer to the "uWebSocketIO Starter Guide" found in the classroom (see Extended Kalman Filter Project lesson).
+>>>>>>> 714e04c05a5f7524c42cfff5aba6f462e51874d3
 
 ### Usage
 
@@ -72,3 +79,22 @@ cd CarND-Capstone/ros
 roslaunch launch/site.launch
 ```
 5. Confirm that traffic light detection works on real life images
+<<<<<<< HEAD
+=======
+
+### Other library/driver information
+Outside of `requirements.txt`, here is information on other driver/library versions used in the simulator and Carla:
+
+Specific to these libraries, the simulator grader and Carla use the following:
+
+|        | Simulator | Carla  |
+| :-----------: |:-------------:| :-----:|
+| Nvidia driver | 384.130 | 384.130 |
+| CUDA | 8.0.61 | 8.0.61 |
+| cuDNN | 6.0.21 | 6.0.21 |
+| TensorRT | N/A | N/A |
+| OpenCV | 3.2.0-dev | 2.4.8 |
+| OpenMP | N/A | N/A |
+
+We are working on a fix to line up the OpenCV versions between the two.
+>>>>>>> 714e04c05a5f7524c42cfff5aba6f462e51874d3
