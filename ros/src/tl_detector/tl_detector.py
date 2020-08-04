@@ -10,6 +10,14 @@ from light_classification.tl_classifier import TLClassifier
 import tf
 import cv2
 import yaml
+import numpy as np
+import math
+
+from scipy.spatial import KDTree
+
+num = 0
+out_path = '/home/nived/Training_Images/'
+count = 0
 
 STATE_COUNT_THRESHOLD = 3
 
@@ -49,7 +57,45 @@ class TLDetector(object):
         self.last_wp = -1
         self.state_count = 0
 
-        rospy.spin()
+        self.traffic_lights_2d = None
+        self.traffic_light_tree = None
+
+        #rospy.spin()
+        self.loop()
+
+    def loop(self):
+        rate = rospy.Rate(1)
+        while not rospy.is_shutdown():
+            rate.sleep()
+
+    def distance(self, ax, ay, bx, by, az = 0, bz = 0):
+        dist = math.sqrt((ax-bx)**2 + (ay-by)**2  + (az-bz)**2)
+        return dist
+
+    #Function to check closest traffic light
+    def get_closest_traffic_light_idx(self):
+        #X and Y coordinate from Current Position of vehicle
+        x = self.pose.pose.position.x
+        y = self.pose.pose.position.y
+        #Query the tree to fond the closest waypoint to the vehicle position
+        closest_idx = self.traffic_light_tree.query([x,y],1)[1]
+
+        #Check if the vehicle is ahead or behind
+
+        closest_cord = self.traffic_lights_2d[closest_idx]
+        previous_cord = self.traffic_lights_2d[closest_idx -1] # One paypoint behind -1
+
+        #Convert to array to create a hyperplane
+        closest_vector = np.array(closest_cord)
+        previous_vector = np.array(previous_cord)
+        position_vector = np.array([x,y])
+
+        dot_product = np.dot(closest_vector-previous_vector, position_vector - closest_vector)
+
+        if dot_product > 0:
+            closest_idx = (closest_idx + 1) % len(self.traffic_lights_2d)
+        return closest_idx
+
 
     def pose_cb(self, msg):
         self.pose = msg
@@ -59,6 +105,11 @@ class TLDetector(object):
 
     def traffic_cb(self, msg):
         self.lights = msg.lights
+        if not self.traffic_lights_2d: # If not initialized
+            #Convert to a list with 2D coordinates X and Y only
+            self.traffic_lights_2d = [[light.pose.pose.position.x, light.pose.pose.position.y] for light in self.lights]
+            self.traffic_light_tree = KDTree(self.traffic_lights_2d)
+
 
     def image_cb(self, msg):
         """Identifies red lights in the incoming camera image and publishes the index
@@ -70,7 +121,31 @@ class TLDetector(object):
         """
         self.has_image = True
         self.camera_image = msg
+
+        #Collect Training Data
+        traffic_light_id = self.get_closest_traffic_light_idx()
+        x1 = self.pose.pose.position.x
+        y1 = self.pose.pose.position.y
+        x2 = self.lights[traffic_light_id].pose.pose.position.x
+        y2 = self.lights[traffic_light_id].pose.pose.position.y
+
+        dist = self.distance(x1, y1, x2, y2)
+        light_dict = {0: 'red', 1: 'yellow', 2:'green', 4:'unknown'}
+        light_color = light_dict[self.lights[traffic_light_id].state]
+
+        global num
+
+        if dist < 50:
+            save_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
+            save_name = out_path + light_color + '%04d.png' % num
+            cv2.imwrite(save_name, save_image)
+            num = num +1
+        global count
+
+        #Training Data End
+
         light_wp, state = self.process_traffic_lights()
+        count = 0
 
         '''
         Publish upcoming red lights at camera frequency.
@@ -78,6 +153,7 @@ class TLDetector(object):
         of times till we start using it. Otherwise the previous stable state is
         used.
         '''
+
         if self.state != state:
             self.state_count = 0
             self.state = state
@@ -88,7 +164,8 @@ class TLDetector(object):
             self.upcoming_red_light_pub.publish(Int32(light_wp))
         else:
             self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-        self.state_count += 1
+            self.state_count += 1
+
 
     def get_closest_waypoint(self, pose):
         """Identifies the closest path waypoint to the given position
