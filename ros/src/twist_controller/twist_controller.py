@@ -28,7 +28,10 @@ class Controller(object):
         self.vel_lpf = LowPassFilter(tau, ts) #Remove high frequency noise from velocity
         self.last_time = rospy.get_time()
 
-        pass
+        self.vehicle_mass = vehicle_mass
+        self.decel_limit = decel_limit
+        self.accel_limit = accel_limit
+        self.wheel_radius = wheel_radius
 
     def control(self, dbw_enabled, current_vel, linear_vel, angular_vel):
         # TODO: Change the arg, kwarg list to suit your needs

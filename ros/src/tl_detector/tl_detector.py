@@ -19,6 +19,7 @@ num = 0
 out_path = '/home/workspace/CarND-Capstone/training_data/'
 count = 0
 COLLECTING_TRAINING_DATA = False
+USING_INTERNAL_LIGHT_STATE = True
 
 STATE_COUNT_THRESHOLD = 3
 
@@ -210,8 +211,10 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        state = self.lights[light].state
-        return state
+        if USING_INTERNAL_LIGHT_STATE:
+            state = self.lights[light].state
+            return state
+
         if(not self.has_image):
             self.prev_light_loc = None
             state = self.lights[light].state
