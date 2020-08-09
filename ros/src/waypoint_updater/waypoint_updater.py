@@ -42,7 +42,7 @@ class WaypointUpdater(object):
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
         # TODO: Add other member variables you need below
-        self.decel_limit = rospy.get_param('~decel_limit', 5)
+        self.decel_limit = rospy.get_param('~decel_limit', 0.8)
         
         self.pose = None
         self.base_waypoints = None
