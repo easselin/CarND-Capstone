@@ -86,7 +86,8 @@ class TLClassifier(object):
         """
         #TODO implement light color prediction
 
-        image_np = np.expand_dims(np.asarray(image, dtype=np.uint8), 0)
+        img_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image_np = np.expand_dims(np.asarray(img_rgb, dtype=np.uint8), 0)
 
         (scores, classes) = self.sess.run([self.detection_scores, self.detection_classes], 
                                         		feed_dict={self.image_tensor: image_np})
