@@ -19,7 +19,7 @@ num = 0
 out_path = '/home/workspace/CarND-Capstone/training_data/'
 count = 0
 COLLECTING_TRAINING_DATA = False
-USING_INTERNAL_LIGHT_STATE = True
+USING_INTERNAL_LIGHT_STATE = False
 
 STATE_COUNT_THRESHOLD = 3
 
