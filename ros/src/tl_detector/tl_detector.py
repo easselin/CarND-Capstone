@@ -64,7 +64,10 @@ class TLDetector(object):
 
         self.traffic_lights_2d = None
         self.traffic_light_tree = None
-        self.light_dict = {0: 'red', 1: 'yellow', 2:'green', 4:'unknown'}
+        self.light_dict = {0: 'Red', 1: 'Yellow', 2:'Green', 4:'Unknown'}
+
+        self.mapped_category = {1:{'id':2, 'name':'Green'}, 2:{'id':0, 'name':'Red'},
+                                3:{'id':1, 'name':'Yellow'},4:{'id':3, 'name':'Unknown'}}
 
         #rospy.spin()
         self.loop()
@@ -103,7 +106,7 @@ class TLDetector(object):
         return closest_idx
 
 
-    def pose_cb(self, msg):
+    def pose_cb(self, msg): 
         self.pose = msg
 
     def waypoints_cb(self, waypoints):
@@ -223,7 +226,10 @@ class TLDetector(object):
         cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
         #Get classification
-        return self.light_classifier.get_classification(cv_image)
+
+        classified_state = self.light_classifier.get_classification(cv_image)
+
+        return self.mapped_category[classified_state]['id']
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
@@ -253,6 +259,7 @@ class TLDetector(object):
         if dist < 200:
             stop_line_pose = self.stop_line_positions[traffic_light_id]
             closest_wp_idx = self.get_closest_waypoint(stop_line_pose[0], stop_line_pose[1])
+
             state = self.get_light_state(traffic_light_id)
             rospy.logwarn('Closest TL {} dist {} waypoint {} state {}'.format(traffic_light_id, dist, closest_wp_idx, self.light_dict[state]))
             return closest_wp_idx, state
