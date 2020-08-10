@@ -56,9 +56,9 @@ class TLClassifier(object):
         self.light_detected = TrafficLight.UNKNOWN
 
         #Hard Coding the model file path 
-        #print(os.getcwd())
-        #self.model_path = 'light_classification/models/frozen_inference_graph.pb'
-        self.model_path = 'light_classification/models/frozen_inference_graph_1.pb'
+
+        self.model_path = 'light_classification/models/frozen_inference_graph.pb'
+        #self.model_path = 'light_classification/models/frozen_inference_graph_1.pb'
 
         #Load Graph with the help of Helper Function
         self.detection_graph = load_graph(self.model_path)
@@ -99,7 +99,7 @@ class TLClassifier(object):
     	scores, classes = filter_results(confidence_cutoff, scores, classes)
 
     	if(len(scores)>1):
-    		return classes[0]-1
+    		return classes[0]
     	else:
     		return TrafficLight.UNKNOWN 
 
