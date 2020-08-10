@@ -66,8 +66,8 @@ class TLDetector(object):
         self.traffic_light_tree = None
         self.light_dict = {0: 'Red', 1: 'Yellow', 2:'Green', 4:'Unknown'}
 
-        self.mapped_category = {1:{'id':2, 'name':'Green'}, 2:{'id':0, 'name':'Red'},
-                                3:{'id':1, 'name':'Yellow'},4:{'id':3, 'name':'Unknown'}}
+        self.mapped_category = { 1:{'id':2, 'name':'Green'}, 2:{'id':0, 'name':'Red'},
+                                 3:{'id':1, 'name':'Yellow'},4:{'id':3, 'name':'Unknown'}}
 
         #rospy.spin()
         self.loop()
