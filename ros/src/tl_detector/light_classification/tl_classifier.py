@@ -47,17 +47,18 @@ def filter_results(min_score, scores, classes):
     
     return filtered_scores, filtered_classes
 
-
-
 class TLClassifier(object):
-    def __init__(self):
+    def __init__(self, isSite):
         #TODO load classifier
         
         self.light_detected = TrafficLight.UNKNOWN
-
+                
         #Hard Coding the model file path 
-
-        self.model_path = 'light_classification/models/frozen_inference_graph.pb'
+        if isSite:
+            self.model_path = 'light_classification/models/frozen_inference_graph_real_world.pb'
+        else:
+            self.model_path = 'light_classification/models/frozen_inference_graph.pb'
+        
         #self.model_path = 'light_classification/models/frozen_inference_graph_1.pb'
 
         #Load Graph with the help of Helper Function
